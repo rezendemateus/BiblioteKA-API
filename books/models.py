@@ -7,9 +7,8 @@ class Book(models.Model):
     synopsis = models.TextField()
     added_at = models.DateTimeField(auto_now_add=True)
 
-    owner = models.ForeignKey("users.User", on_delete=models.CASCADE, null=True)
     folowers = models.ManyToManyField(
-        "user.User",
+        "users.User",
         through="books.Folower",
         related_name="books",
     )
