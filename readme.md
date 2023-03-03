@@ -21,7 +21,7 @@ source venv/bin/activate
 3. Instale os pacotes que estão no arquivo `requirements.txt`:
 
 ```bash
-pip install -r requirements
+pip install -r requirements.txt
 ```
 
 4. Faça uma cópia do arquivo `.env.example` com o nome `.env` e preencha os valores das variáveis de ambiente. Devem ficar os 2 arquivos na raiz do projeto dessa forma:
