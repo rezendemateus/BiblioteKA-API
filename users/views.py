@@ -1,3 +1,11 @@
-from django.shortcuts import render
+from .models import User
+from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
-# Create your views here.
+
+class UserView(CreateAPIView):
+    pass
+
+
+class UserDetailView(RetrieveUpdateDestroyAPIView):
+    pass
