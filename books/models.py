@@ -6,6 +6,8 @@ class Book(models.Model):
     author = models.CharField(max_length=100)
     synopsis = models.TextField()
     added_at = models.DateTimeField(auto_now_add=True)
+    languages = models.CharField(max_length=100)
+    published_at = models.DateField()
 
     folowers = models.ManyToManyField(
         "users.User",
@@ -13,7 +15,18 @@ class Book(models.Model):
         related_name="books",
     )
 
+    genders = models.ManyToManyField(
+        "books.Gender",
+        related_name="books",
+    )
+
 
 class Folower(models.Model):
     book_id = models.ForeignKey("books.Book", on_delete=models.CASCADE)
     user_id = models.ForeignKey("users.User", on_delete=models.CASCADE)
+
+
+class Gender(models.Model):
+    name = models.CharField(
+        max_length=150,
+    )
