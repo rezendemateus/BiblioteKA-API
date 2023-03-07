@@ -30,6 +30,8 @@ class UserSerializer(ModelSerializer):
             "email": {
                 "validators": [UniqueValidator(queryset=User.objects.all())],
             },
+            "date_joined": {"read_only": True},
+            "is_active": {"read_only": True},
         }
 
     def create(self, validated_data: dict) -> User:
