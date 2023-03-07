@@ -6,7 +6,7 @@ class Book(models.Model):
     author = models.CharField(max_length=100)
     synopsis = models.TextField()
     added_at = models.DateTimeField(auto_now_add=True)
-    languages = models.CharField(max_length=100)
+    language = models.CharField(max_length=100)
     published_at = models.DateField()
 
     folowers = models.ManyToManyField(
