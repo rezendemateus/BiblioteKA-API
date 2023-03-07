@@ -18,6 +18,7 @@ class Book(models.Model):
     genders = models.ManyToManyField(
         "books.Gender",
         related_name="books",
+        on_delete=models.SET_NULL,
     )
 
 
