@@ -44,7 +44,7 @@ class UserSerializer(ModelSerializer):
 
     def update(self, instance: User, validated_data: dict) -> User:
         for key, value in validated_data.items():
-            if key == "password" or validated_data["is_superuser"]:
+            if key == "password":
                 instance.set_password(value)
             else:
                 setattr(instance, key, value)
