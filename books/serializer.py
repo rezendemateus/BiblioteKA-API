@@ -41,7 +41,7 @@ class BookSerializer(serializers.ModelSerializer):
             "author",
             "synopsis",
             "genders",
-            "languages",
+            "language",
             "published_at",
             "added_at",
             "folowers_count",
