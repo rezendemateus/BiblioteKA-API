@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Book, Gender
+from .models import Book, Gender, Follower
 from copies.models import Copy
 
 
@@ -15,7 +15,7 @@ class GenderSerializer(serializers.ModelSerializer):
 class BookSerializer(serializers.ModelSerializer):
     copies_count = serializers.IntegerField(write_only=True)
     copies = serializers.SerializerMethodField()
-    folowers_count = serializers.SerializerMethodField()
+    followers_count = serializers.SerializerMethodField()
     genders = GenderSerializer(many=True)
 
     def get_copies(self, obj: Book) -> dict:
@@ -28,10 +28,10 @@ class BookSerializer(serializers.ModelSerializer):
             "copies_avaliable": copies_avaliable_count,
         }
 
-    def get_folowers_count(self, obj: Book) -> int:
-        folowers_count = obj.folowers.count()
+    def get_followers_count(self, obj: Book) -> int:
+        followers_count = obj.followers.count()
 
-        return folowers_count
+        return followers_count
 
     class Meta:
         model = Book
@@ -44,13 +44,13 @@ class BookSerializer(serializers.ModelSerializer):
             "language",
             "published_at",
             "added_at",
-            "folowers_count",
+            "followers_count",
             "copies_count",
             "copies",
         ]
         read_only_fields = [
             "copies",
-            "folowers_count",
+            "followers_count",
         ]
 
     def create(self, validated_data) -> Book:
@@ -76,3 +76,12 @@ class BookSerializer(serializers.ModelSerializer):
 
 class BookDetailSerializer(serializers.Serializer):
     copies = serializers.IntegerField()
+
+
+class FollowerSerializer(serializers.ModelSerializer):
+    book_title = serializers.CharField(source="book.title", read_only=True)
+    username = serializers.CharField(source="user.username", read_only=True)
+
+    class Meta:
+        model = Follower
+        fields = ["id", "book_title", "username"]
