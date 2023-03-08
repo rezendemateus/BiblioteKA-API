@@ -42,7 +42,10 @@ class FollowerView(ListCreateAPIView):
         except Book.DoesNotExist:
             raise NotFound("Book does not exists!")
 
-        follower_queryset = Follower.objects.filter(book_id=book_obj.id)
+        follower_queryset = Follower.objects.filter(
+            book_id=book_obj.id,
+            user_id=self.request.user.id,
+        )
 
         return follower_queryset
 
