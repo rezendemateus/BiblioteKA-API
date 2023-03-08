@@ -2,7 +2,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .permissions import IsAdminOrReadOnly
 from .models import Book
-from .serializer import BookSerializer, BookDetailSerializer
+from .serializer import BookSerializer
 from django.shortcuts import get_object_or_404
 from copies.models import Copy
 from rest_framework.views import Request, Response, status
@@ -29,18 +29,16 @@ class BooksDetailView(RetrieveUpdateDestroyAPIView):
         book_id = kwargs["book_id"]
         book_obj: Book = get_object_or_404(Book, id=book_id)
 
-        serializer = BookDetailSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        add_copies = request.data.pop("add_copies", None)
+        delete_copies = request.data.pop("delete_copies", None)
 
-        if serializer.data["copies"] >= 0:
-            copies_list_obj = [
-                Copy(book=book_obj) for _ in range(serializer.data["copies"])
-            ]
+        if add_copies:
+            copies_list_obj = [Copy(book=book_obj) for _ in range(add_copies)]
 
             Copy.objects.bulk_create(copies_list_obj)
 
-        if serializer.data["copies"] < 0:
-            for delete_copy in range(serializer.data["copies"] * -1):
+        if delete_copies:
+            for delete_copy in range(delete_copies):
                 delete_copy = Copy.objects.filter(book=book_obj, avaliable=True).first()
 
                 if not delete_copy:

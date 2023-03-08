@@ -72,7 +72,3 @@ class BookSerializer(serializers.ModelSerializer):
         Copy.objects.bulk_create(copies_obj)
 
         return book_obj
-
-
-class BookDetailSerializer(serializers.Serializer):
-    copies = serializers.IntegerField()
