@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Book, Gender
 from copies.models import Copy
+from rest_framework.views import Response
 
 
 class GenderSerializer(serializers.ModelSerializer):
@@ -72,3 +73,7 @@ class BookSerializer(serializers.ModelSerializer):
         Copy.objects.bulk_create(copies_obj)
 
         return book_obj
+
+
+class BookDetailSerializer(serializers.Serializer):
+    copies = serializers.IntegerField()
