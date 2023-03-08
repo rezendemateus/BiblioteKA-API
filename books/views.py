@@ -6,7 +6,7 @@ from rest_framework.generics import (
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound, ParseError
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .permissions import IsAdminOrReadOnly
+from .permissions import IsAdminOrReadOnly, IsFollowerOwner
 from .models import Book, Follower
 from .serializer import BookSerializer, FollowerSerializer
 
@@ -63,7 +63,7 @@ class FollowerView(ListCreateAPIView):
 
 class FollowerDetailView(DestroyAPIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsFollowerOwner]
 
     queryset = Follower.objects.all()
     serializer_class = FollowerSerializer
