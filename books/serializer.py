@@ -72,3 +72,9 @@ class BookSerializer(serializers.ModelSerializer):
         Copy.objects.bulk_create(copies_obj)
 
         return book_obj
+
+
+class FollowerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Follower
+        fields = ["id"]
