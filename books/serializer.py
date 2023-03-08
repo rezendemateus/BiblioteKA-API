@@ -75,6 +75,9 @@ class BookSerializer(serializers.ModelSerializer):
 
 
 class FollowerSerializer(serializers.ModelSerializer):
+    book_title = serializers.CharField(source="book.title", read_only=True)
+    username = serializers.CharField(source="user.username", read_only=True)
+
     class Meta:
         model = Follower
-        fields = ["id"]
+        fields = ["id", "book_title", "username"]
