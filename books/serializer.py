@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import Book, Gender
 from copies.models import Copy
-from rest_framework.views import Response
 
 
 class GenderSerializer(serializers.ModelSerializer):
