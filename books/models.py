@@ -15,10 +15,7 @@ class Book(models.Model):
         related_name="books",
     )
 
-    genders = models.ManyToManyField(
-        "books.Gender",
-        related_name="books",
-    )
+    genders = models.ManyToManyField("books.Gender", related_name="books")
 
 
 class Folower(models.Model):
