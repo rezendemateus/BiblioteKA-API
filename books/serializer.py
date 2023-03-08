@@ -74,10 +74,6 @@ class BookSerializer(serializers.ModelSerializer):
         return book_obj
 
 
-class BookDetailSerializer(serializers.Serializer):
-    copies = serializers.IntegerField()
-
-
 class FollowerSerializer(serializers.ModelSerializer):
     book_title = serializers.CharField(source="book.title", read_only=True)
     username = serializers.CharField(source="user.username", read_only=True)
