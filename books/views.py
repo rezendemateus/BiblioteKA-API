@@ -1,7 +1,7 @@
 from rest_framework.generics import (
-    CreateAPIView,
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
+    DestroyAPIView,
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound, ParseError
@@ -30,12 +30,21 @@ class BooksDetailView(RetrieveUpdateDestroyAPIView):
     ...
 
 
-class FollowerView(CreateAPIView):
+class FollowerView(ListCreateAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
-    queryset = Follower.objects.all()
     serializer_class = FollowerSerializer
+
+    def get_queryset(self):
+        try:
+            book_obj = Book.objects.get(pk=self.kwargs["books_id"])
+        except Book.DoesNotExist:
+            raise NotFound("Book does not exists!")
+
+        follower_queryset = Follower.objects.filter(book_id=book_obj.id)
+
+        return follower_queryset
 
     def perform_create(self, serializer):
         try:
@@ -50,3 +59,22 @@ class FollowerView(CreateAPIView):
             raise ParseError("You already follow this book.")
 
         serializer.save(book=book_obj, user=self.request.user)
+
+
+class FollowerDetailView(DestroyAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    queryset = Follower.objects.all()
+    serializer_class = FollowerSerializer
+    lookup_url_kwarg = "follower_id"
+
+    def get_queryset(self):
+        try:
+            book_obj = Book.objects.get(pk=self.kwargs["books_id"])
+        except Book.DoesNotExist:
+            raise NotFound("Book does not exists!")
+
+        follower_queryset = Follower.objects.filter(book_id=book_obj.id)
+
+        return follower_queryset
