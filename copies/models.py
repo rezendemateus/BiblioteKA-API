@@ -20,5 +20,5 @@ class Loan(models.Model):
     amount_paid = models.IntegerField(null=True)
     paid_at = models.DateTimeField(null=True)
 
-    user_id = models.ForeignKey("users.User", on_delete=models.CASCADE)
-    copy_id = models.ForeignKey("copies.Copy", on_delete=models.CASCADE)
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    copy = models.ForeignKey("copies.Copy", on_delete=models.CASCADE)
