@@ -10,11 +10,12 @@ from .serializers import LoanSerializer
 from books.permissions import IsAdminOrReadOnly
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.exceptions import ParseError, NotFound
+from .permissions import IsUserUnblocked
 
 
 class LoanView(CreateAPIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly, IsUserUnblocked]
 
     queryset = Loan.objects.all()
     serializer_class = LoanSerializer

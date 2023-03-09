@@ -49,12 +49,15 @@ class LoanSerializer(serializers.ModelSerializer):
 
         return Loan.objects.create(**validated_data)
 
-    def update(self, instance, validated_data):
+    def update(self, instance: Loan, validated_data: dict):
         instance.amount_paid = calculate_loan_amount(instance.loan_term_at)
         instance.paid_at = timezone.now()
         instance.copy.avaliable = True
         instance.copy.save()
         instance.save()
+        if instance.amount_paid > 0:
+            instance.user.blocked_until = timezone.now() + timedelta(days=7)
+            instance.user.save()
 
         return instance
 
