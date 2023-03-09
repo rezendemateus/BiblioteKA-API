@@ -1,15 +1,15 @@
 from rest_framework.generics import (
     get_object_or_404,
     CreateAPIView,
-    UpdateAPIView
-    )
+    UpdateAPIView,
+)
 from .models import Loan, Copy
 from books.models import Book
 from users.models import User
 from .serializers import LoanSerializer
 from books.permissions import IsAdminOrReadOnly
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.exceptions import ParseError
+from rest_framework.exceptions import ParseError, NotFound
 
 
 class LoanView(CreateAPIView):
@@ -28,6 +28,9 @@ class LoanView(CreateAPIView):
         if not copy:
             raise ParseError("Copies unavailable")
 
+        copy.avaliable = False
+        copy.save()
+
         serializer.save(copy=copy, user=user)
 
 
@@ -37,9 +40,11 @@ class LoanDetailView(UpdateAPIView):
 
     queryset = Loan.objects.all()
     serializer_class = LoanSerializer
+    lookup_url_kwarg = "loan_id"
 
-    def perform_update(self, serializer):
-        copy = get_object_or_404(Book, pk=self.kwargs.get("book_id"))
-        user = get_object_or_404(User, pk=self.kwargs.get(user.id))
+    def get_object(self):
+        loan = Loan.objects.filter(id=self.kwargs.get("loan_id")).first()
+        if not loan:
+            raise NotFound("Loan does not exist")
 
-        serializer.save(copy=copy, user=user)
+        return loan

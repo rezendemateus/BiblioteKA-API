@@ -17,7 +17,7 @@ class Copy(models.Model):
 class Loan(models.Model):
     borrowed_at = models.DateTimeField(auto_now_add=True)
     loan_term_at = models.DateTimeField()
-    amount_paid = models.IntegerField(null=True)
+    amount_paid = models.DecimalField(null=True, decimal_places=2, max_digits=10)
     paid_at = models.DateTimeField(null=True)
 
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)

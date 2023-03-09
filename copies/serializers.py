@@ -2,75 +2,73 @@ from rest_framework import serializers
 from .models import Loan
 from datetime import timedelta, datetime
 from django.utils import timezone
-import ipdb
 
 
 class LoanSerializer(serializers.ModelSerializer):
-    username = serializers.SerializerMethodField()
-    user_id = serializers.SerializerMethodField()
-    book_name = serializers.SerializerMethodField()
+    username = serializers.CharField(source="user.username", write_only=True)
+    book_name = serializers.CharField(source="copy.book.title", read_only=True)
     loan_term = serializers.SerializerMethodField()
+    user = serializers.SerializerMethodField()
 
     class Meta:
         model = Loan
         fields = [
+            "id",
+            "loan_term",
             "amount_paid",
             "borrowed_at",
-            "copy_id",
-            "loan_term_at",
             "paid_at",
-            "user_id",
-            "username",
             "book_name",
-            "loan_term"
-            ]
+            "user",
+            "username",
+        ]
         read_only_fields = [
             "username",
             "user_id",
             "copy_id",
-            # "loan_term_at",
             "book_name",
             "loan_term",
-            ]
-        extra_kwargs = {
-            "paid_at": {
-                "allow_null": True,
-                "default": None
-                },
-            "loan_term_at": {
-                "write_only": True
-            }
-            }
-
-    def get_username(self, object):
-        return object.user.username
-
-    def get_user_id(self, object):
-        return object.user.id
-
-    def get_book_name(self, object):
-        return object.copy.book.title
+        ]
+        extra_kwargs = {"paid_at": {"allow_null": True, "default": None}}
 
     def get_loan_term(self, object):
-        return self.loan_term_at.strftime("%A, %d, %b, %Y")
+        return object.loan_term_at.strftime("%A, %d, %b, %Y")
+
+    def get_user(self, object):
+        user = {"id": object.user.id, "username": object.user.username}
+        return user
 
     def create(self, validated_data):
         loan_date = datetime.now()
         loan_termin_at = loan_date + timedelta(days=7)
 
         if loan_termin_at.strftime("%A") == "Saturday":
-            loan_termin_at = (loan_termin_at + timedelta(days=2))
+            loan_termin_at = loan_termin_at + timedelta(days=2)
         if loan_termin_at.strftime("%A") == "Sunday":
-            loan_termin_at = (loan_termin_at + timedelta(days=1))
-
+            loan_termin_at = loan_termin_at + timedelta(days=1)
         validated_data["loan_term_at"] = loan_termin_at
-        # loan = Loan(validated_data, {"loan_term_at": loan.termin_at})
-        # loan.save()
-        # return Loan.objects.create(**validated_data)
+
         return Loan.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
+        instance.amount_paid = calculate_loan_amount(instance.loan_term_at)
         instance.paid_at = timezone.now()
+        instance.copy.available = True
+        instance.copy.save()
         instance.save()
 
         return instance
+
+
+def calculate_loan_amount(loan_terminated_date: datetime):
+    today = timezone.now()
+    loan_terminated = loan_terminated_date
+
+    days = (today - loan_terminated).days
+
+    if days <= 0:
+        return 0
+
+    total = 5 + (days * 0.5)
+
+    return total
