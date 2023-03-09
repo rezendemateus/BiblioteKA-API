@@ -14,9 +14,9 @@ class LoanSerializer(serializers.ModelSerializer):
         model = Loan
         fields = [
             "id",
+            "borrowed_at",
             "loan_term",
             "amount_paid",
-            "borrowed_at",
             "paid_at",
             "book_name",
             "user",
@@ -26,7 +26,6 @@ class LoanSerializer(serializers.ModelSerializer):
             "username",
             "user_id",
             "copy_id",
-            "book_name",
             "loan_term",
         ]
         extra_kwargs = {"paid_at": {"allow_null": True, "default": None}}
