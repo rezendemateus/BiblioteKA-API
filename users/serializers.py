@@ -1,9 +1,11 @@
 from .models import User
-from rest_framework.serializers import ModelSerializer
 from rest_framework.validators import UniqueValidator
+from rest_framework import serializers
+from copies.models import Loan
+from copies.serializers import LoanSerializer
 
 
-class UserSerializer(ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
@@ -52,3 +54,16 @@ class UserSerializer(ModelSerializer):
         instance.save()
 
         return instance
+
+
+class HistoricLoanSerializer(LoanSerializer):
+    class Meta:
+        model = Loan
+        fields = [
+            "id",
+            "borrowed_at",
+            "loan_term",
+            "amount_paid",
+            "paid_at",
+            "book_name",
+        ]
