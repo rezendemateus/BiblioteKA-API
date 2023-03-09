@@ -52,7 +52,7 @@ class LoanSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.amount_paid = calculate_loan_amount(instance.loan_term_at)
         instance.paid_at = timezone.now()
-        instance.copy.available = True
+        instance.copy.avaliable = True
         instance.copy.save()
         instance.save()
 
