@@ -14,9 +14,9 @@ class LoanSerializer(serializers.ModelSerializer):
         model = Loan
         fields = [
             "id",
+            "borrowed_at",
             "loan_term",
             "amount_paid",
-            "borrowed_at",
             "paid_at",
             "book_name",
             "user",
@@ -26,7 +26,6 @@ class LoanSerializer(serializers.ModelSerializer):
             "username",
             "user_id",
             "copy_id",
-            "book_name",
             "loan_term",
         ]
         extra_kwargs = {"paid_at": {"allow_null": True, "default": None}}
@@ -53,7 +52,7 @@ class LoanSerializer(serializers.ModelSerializer):
     def update(self, instance: Loan, validated_data: dict):
         instance.amount_paid = calculate_loan_amount(instance.loan_term_at)
         instance.paid_at = timezone.now()
-        instance.copy.available = True
+        instance.copy.avaliable = True
         instance.copy.save()
         instance.save()
         if instance.amount_paid > 0:
