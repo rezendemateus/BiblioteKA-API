@@ -1,11 +1,13 @@
 from rest_framework import serializers
-from models import Loan
+from .models import Loan
 from datetime import timezone
 
 
 class LoanSerializer(serializers.ModelSerializer):
     amount_paid = serializers.IntegerField(allow_null=True)
     paid_at = serializers.DateTimeField(allow_null=True)
+    username = serializers.SerializerMethodField()
+    user_id = serializers.SerializerMethodField()
 
     class Meta:
         model = Loan
@@ -17,7 +19,14 @@ class LoanSerializer(serializers.ModelSerializer):
             "paid_at",
             "user_id"
             ]
-        read_only_fields = ["borrowed_at"]
+        read_only_fields = ["borrowed_at", "username"]
+        extra_kwargs = {"user_id": {"write_only": True}}
+
+    def get_username(self, object):
+        return object.user.username
+
+    def get_user_id(self, object):
+        return object.user.id
 
     def create(self, validated_data):
         loan_date = timezone.now()
