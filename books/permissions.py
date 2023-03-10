@@ -6,7 +6,7 @@ from books.models import Follower
 
 
 class IsAdminOrReadOnly(permissions.BasePermission):
-    def has_object_permission(self, request, view: View, obj: User) -> bool:
+    def has_permission(self, request, view: View) -> bool:
         return request.method in SAFE_METHODS or request.user.is_superuser
 
 
