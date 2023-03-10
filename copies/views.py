@@ -10,12 +10,12 @@ from .serializers import LoanSerializer
 from books.permissions import IsAdminOrReadOnly
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.exceptions import ParseError, NotFound
-from .permissions import IsUserUnblocked
+from .mixin import VerifyIfUserIsBlockedOrHavePendingBooksMixin
 
 
-class LoanView(CreateAPIView):
+class LoanView(VerifyIfUserIsBlockedOrHavePendingBooksMixin, CreateAPIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdminOrReadOnly, IsUserUnblocked]
+    permission_classes = [IsAdminOrReadOnly]
 
     queryset = Loan.objects.all()
     serializer_class = LoanSerializer
