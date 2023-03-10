@@ -45,27 +45,23 @@ class LoanDetailView(UpdateAPIView):
     lookup_url_kwarg = "loan_id"
 
     def get_object(self):
-        # import ipdb
-
         loan = Loan.objects.filter(id=self.kwargs.get("loan_id")).first()
         followers = loan.copy.book.followers.all()
         followers = [follower.email for follower in followers]
         copy = loan.copy.avaliable
 
-        # ipdb.set_trace()
-
         if not loan:
             raise NotFound("Loan does not exist")
 
-        print(copy is True, "---------------------------->")
         if copy is True:
-            send_mail(
-                subject="Teste de envio de email",
-                message="Não foi um fracasso",
+            return send_mail(
+                subject="Um livro que você segue está disponível!",
+                message="Olá, vimos que você segue o livro"
+                f' "{loan.copy.book.title}" '
+                "e gostaríamos de avisar que ele já está disponível para retirada!",
                 from_email=settings.EMAIL_HOST_USER,
                 recipient_list=followers,
                 fail_silently=False,
             )
-            print("Email enviado")
 
         return loan
