@@ -10,10 +10,10 @@ from .serializers import LoanSerializer
 from books.permissions import IsAdminOrReadOnly
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.exceptions import ParseError, NotFound
-from .mixin import VerifyIfUserIsBlockedMixin
+from .mixin import VerifyIfUserIsBlockedOrHavePendingBooksMixin
 
 
-class LoanView(VerifyIfUserIsBlockedMixin, CreateAPIView):
+class LoanView(VerifyIfUserIsBlockedOrHavePendingBooksMixin, CreateAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminOrReadOnly]
 
