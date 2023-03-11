@@ -4,6 +4,8 @@ from copies.models import Loan
 from django.utils import timezone
 from datetime import timedelta
 from rest_framework.exceptions import PermissionDenied
+from books.models import Book
+from datetime import datetime
 
 
 class VerifyIfUserIsBlockedOrHavePendingBooksMixin:
@@ -30,4 +32,22 @@ class VerifyIfUserIsBlockedOrHavePendingBooksMixin:
                 f"You have {isBorrowedBook.count()} books to return!"
             )
 
-        return super().create(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
+
+
+class VerifyFollowersAndDayToTermMixin:
+    def post(self, request, *args, **kwargs):
+        book = get_object_or_404(Book, pk=self.kwargs["book_id"])
+        loan_date = datetime.now()
+        loan_termin_at = loan_date + timedelta(days=7)
+
+        if book.followers.count() > 10:
+            loan_termin_at = loan_date + timedelta(days=4)
+        if loan_termin_at.strftime("%A") == "Saturday":
+            loan_termin_at = loan_termin_at + timedelta(days=2)
+        if loan_termin_at.strftime("%A") == "Sunday":
+            loan_termin_at = loan_termin_at + timedelta(days=1)
+
+        request.data["loan_term_at"] = loan_termin_at
+
+        return super().post(request, *args, **kwargs)

@@ -1,18 +1,25 @@
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.generics import get_object_or_404, CreateAPIView, UpdateAPIView
 from rest_framework.exceptions import ParseError, NotFound
-from .mixin import VerifyIfUserIsBlockedOrHavePendingBooksMixin
 from .models import Loan, Copy
 from books.models import Book
 from users.models import User
 from .serializers import LoanSerializer
 from books.permissions import IsAdminOrReadOnly
+from .mixin import (
+    VerifyIfUserIsBlockedOrHavePendingBooksMixin,
+    VerifyFollowersAndDayToTermMixin,
+)
 from django.core.mail import send_mail
 from django.conf import settings
 import copies.reminder_devolution  # não apagar
 
 
-class LoanView(VerifyIfUserIsBlockedOrHavePendingBooksMixin, CreateAPIView):
+class LoanView(
+    VerifyIfUserIsBlockedOrHavePendingBooksMixin,
+    VerifyFollowersAndDayToTermMixin,
+    CreateAPIView,
+):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminOrReadOnly]
 
