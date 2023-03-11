@@ -9,6 +9,4 @@ urlpatterns = [
         "books/<int:books_id>/follower/<int:follower_id>/",
         views.FollowerDetailView.as_view(),
     ),
-    # path("books/<int:books_id>/loan/", .as_view()),
-    # path("books/loan/<int:loan_id>/", .as_view()),
 ]
