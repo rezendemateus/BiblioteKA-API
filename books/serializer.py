@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Book, Gender, Follower
 from copies.models import Copy
+from .exceptions import ConflitcError
 
 
 class GenderSerializer(serializers.ModelSerializer):
@@ -54,6 +55,13 @@ class BookSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data) -> Book:
+        book_obj = Book.objects.filter(
+            title=validated_data["title"], language=validated_data["language"]
+        ).first()
+
+        if book_obj:
+            raise ConflitcError
+
         copies_number = validated_data.pop("copies_count")
         genders_list = validated_data.pop("genders")
 
