@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Loan
 from datetime import timedelta, datetime
 from django.utils import timezone
+from rest_framework.exceptions import ParseError
 
 
 class LoanSerializer(serializers.ModelSerializer):
@@ -50,6 +51,9 @@ class LoanSerializer(serializers.ModelSerializer):
         return Loan.objects.create(**validated_data)
 
     def update(self, instance: Loan, validated_data: dict):
+        if instance.paid_at:
+            raise ParseError("book has already been returned!")
+
         instance.amount_paid = calculate_loan_amount(instance.loan_term_at)
         instance.paid_at = timezone.now()
         instance.copy.avaliable = True
