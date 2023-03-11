@@ -1,23 +1,19 @@
-from rest_framework.generics import (
-    get_object_or_404,
-    CreateAPIView,
-    UpdateAPIView,
-)
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.generics import get_object_or_404, CreateAPIView, UpdateAPIView
+from rest_framework.exceptions import ParseError, NotFound
 from .models import Loan, Copy
-from books.models import Book, Follower
+from books.models import Book
 from users.models import User
 from .serializers import LoanSerializer
 from books.permissions import IsAdminOrReadOnly
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.exceptions import ParseError, NotFound
-from .permissions import IsUserUnblocked
 from django.core.mail import send_mail
 from django.conf import settings
+from .mixin import VerifyIfUserIsBlockedOrHavePendingBooksMixin
 
 
-class LoanView(CreateAPIView):
+class LoanView(VerifyIfUserIsBlockedOrHavePendingBooksMixin, CreateAPIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdminOrReadOnly, IsUserUnblocked]
+    permission_classes = [IsAdminOrReadOnly]
 
     queryset = Loan.objects.all()
     serializer_class = LoanSerializer

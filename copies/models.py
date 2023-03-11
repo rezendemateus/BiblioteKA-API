@@ -10,7 +10,7 @@ class Copy(models.Model):
     )
 
     borrowed_to_users = models.ManyToManyField(
-        "users.User", through="copies.Loan", related_name="Copies"
+        "users.User", through="copies.Loan", related_name="copies"
     )
 
 
