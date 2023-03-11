@@ -14,6 +14,7 @@ from .permissions import IsUserUnblocked
 from django.core.mail import send_mail
 from django.conf import settings
 from datetime import timedelta
+from django.utils import timezone
 import schedule
 import time
 
@@ -77,7 +78,7 @@ def reminder_devolution():
         reminder_day = loan.loan_term_at - timedelta(days=1)
         user_email = loan.user.email
 
-        if reminder_day is loan.loan_term_at - timedelta(days=1):
+        if reminder_day is timezone.now():
             send_mail(
                 subject="ATENÇÃO: Lembrete de devolução!",
                 message="O livro que você emprestou"
