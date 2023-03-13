@@ -62,7 +62,7 @@ class HistoricLoanSerializer(LoanSerializer):
         fields = [
             "id",
             "borrowed_at",
-            "loan_term",
+            "loan_term_at",
             "amount_paid",
             "paid_at",
             "book_name",
