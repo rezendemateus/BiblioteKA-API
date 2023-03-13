@@ -40,6 +40,11 @@ class LoanSerializer(serializers.ModelSerializer):
         user = {"id": object.user.id, "username": object.user.username}
         return user
 
+    def create(self, validated_data: dict):
+        if validated_data.get("satisfaction_stars", False) is not False:
+            validated_data.pop("satisfaction_stars")
+        return super().create(validated_data)
+
     def update(self, instance: Loan, validated_data: dict):
         if instance.paid_at:
             raise ParseError("book has already been returned!")
