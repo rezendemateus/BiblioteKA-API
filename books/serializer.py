@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from .models import Book, Gender, Follower
+from .models import Book, Gender, Follower, Avaliation
 from copies.models import Copy
 from .exceptions import ConflitcError
+from statistics import mean
 
 
 class GenderSerializer(serializers.ModelSerializer):
@@ -18,6 +19,7 @@ class BookSerializer(serializers.ModelSerializer):
     copies = serializers.SerializerMethodField()
     followers_count = serializers.SerializerMethodField()
     genders = GenderSerializer(many=True)
+    satisfaction_stars = serializers.SerializerMethodField()
 
     def get_copies(self, obj: Book) -> dict:
         copies_count = obj.copies.count()
@@ -34,6 +36,13 @@ class BookSerializer(serializers.ModelSerializer):
 
         return followers_count
 
+    def get_satisfaction_stars(self, obj: Book):
+        star_list = [
+            int(stars.satisfaction_stars)
+            for stars in Avaliation.objects.filter(book=obj)
+        ]
+        return round(mean(star_list or [0]), 2)
+
     class Meta:
         model = Book
         fields = [
@@ -46,6 +55,7 @@ class BookSerializer(serializers.ModelSerializer):
             "published_at",
             "added_at",
             "followers_count",
+            "satisfaction_stars",
             "copies_count",
             "copies",
         ]
@@ -89,3 +99,9 @@ class FollowerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Follower
         fields = ["id", "book_title", "username"]
+
+
+class AvaliationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Avaliation
+        fields = "__all__"
