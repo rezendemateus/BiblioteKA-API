@@ -58,7 +58,7 @@ class LoanDetailView(UpdateAPIView):
             raise NotFound("Loan does not exist")
 
         if copy is True:
-            return send_mail(
+            send_mail(
                 subject="Um livro que você segue está disponível!",
                 message="Olá, vimos que você segue o livro"
                 f' "{loan.copy.book.title}" '
