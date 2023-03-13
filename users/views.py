@@ -9,11 +9,6 @@ from .serializers import UserSerializer, HistoricLoanSerializer
 from .permissions import IsAccountAdminOrOwner
 from copies.models import Loan
 from rest_framework.generics import get_object_or_404
-from datetime import timedelta
-from django.core.mail import send_mail
-from django.conf import settings
-import schedule
-import time
 
 
 class UserView(ListCreateAPIView):
