@@ -2,6 +2,7 @@ from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
     DestroyAPIView,
+    ListAPIView,
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound, ParseError
@@ -117,3 +118,18 @@ class FollowerDetailView(DestroyAPIView):
         follower_queryset = Follower.objects.filter(book_id=book_obj.id)
 
         return follower_queryset
+
+
+class BookFeedView(ListAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAdminOrReadOnly]
+
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+
+    def get_queryset(self):
+        books = Book.objects.all()
+
+        books_feed = list(reversed(books))
+
+        return books_feed[0:10]
