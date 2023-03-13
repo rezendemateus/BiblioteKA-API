@@ -1,10 +1,9 @@
 from .models import Loan
 from django.core.mail import send_mail
 from django.conf import settings
-from datetime import timedelta
+from datetime import timedelta, datetime
 from django.utils import timezone
-import schedule
-import time
+from apscheduler.schedulers.background import BackgroundScheduler
 
 
 def reminder_devolution():
@@ -13,8 +12,9 @@ def reminder_devolution():
     for loan in loans:
         reminder_day = loan.loan_term_at
         user_email = loan.user.email
-        day_before = timezone.now().strftime("%d, %b, %Y") - timedelta(days=1)
-        if reminder_day.strftime("%d, %b, %Y") is day_before:
+        day_before = timezone.now() + timedelta(days=1)
+
+        if reminder_day.day is day_before.day:
             send_mail(
                 subject="ATENÇÃO: Lembrete de devolução!",
                 message="O livro que você emprestou"
@@ -25,9 +25,7 @@ def reminder_devolution():
                 fail_silently=False,
             )
 
-        elif reminder_day.strftime("%d, %b, %Y") < timezone.now().strftime(
-            "%d, %b, %Y"
-        ):
+        elif reminder_day.day < timezone.now().day:
             send_mail(
                 subject="ATENÇÃO: Você possui livro(s) em atraso!",
                 message="O livro que você emprestou"
@@ -39,9 +37,12 @@ def reminder_devolution():
             )
 
 
-schedule.every().day.at("10:00").do(reminder_devolution)
+scheduler = BackgroundScheduler()
+scheduler.add_job(
+    reminder_devolution,
+    "cron",
+    day_of_week="mon-fri",
+    hour=10,
+)
 
-while True:
-    schedule.run_pending()
-    print("roda")
-    time.sleep(3600)
+scheduler.start()
