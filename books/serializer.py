@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Book, Gender, Follower
+from .models import Book, Gender, Follower, Avaliation
 from copies.models import Copy
 from .exceptions import ConflitcError
 
@@ -89,3 +89,9 @@ class FollowerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Follower
         fields = ["id", "book_title", "username"]
+
+
+class AvaliationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Avaliation
+        fields = "__all__"
