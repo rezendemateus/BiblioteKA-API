@@ -16,8 +16,6 @@ class UserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "is_superuser",
-            "date_joined",
-            "is_active",
         ]
         extra_kwargs = {
             "password": {"write_only": True},
@@ -32,8 +30,6 @@ class UserSerializer(serializers.ModelSerializer):
             "email": {
                 "validators": [UniqueValidator(queryset=User.objects.all())],
             },
-            "date_joined": {"read_only": True},
-            "is_active": {"read_only": True},
         }
 
     def create(self, validated_data: dict) -> User:
